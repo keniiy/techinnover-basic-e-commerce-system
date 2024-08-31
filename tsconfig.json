@@ -9,7 +9,7 @@
     "target": "ES2021",
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./src",
+    "baseUrl": ".",
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": false,
@@ -17,9 +17,14 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
+    "allowJs": true,
+    "resolveJsonModule": true,
     "paths": {
-      "@common/*": ["common/*"],
-      "@cmd/*": ["cmd/*"],
+      "@cmd/*": ["./src/cmd/*"],
+      "@common/*": ["./src/common/*"],
+      "@common": ["./src/common/index.ts"],
+      "@database/*": ["./src/common/database/*"],
+      "@database": ["./src/common/database/index.ts"],
     }
   }
 }
