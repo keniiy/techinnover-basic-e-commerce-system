@@ -15,8 +15,10 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe('Hello World!');
+    it('should return "Cheers to exploring our API—Hello World!"', () => {
+      expect(appController.getWelcomeMessageToClient()).toBe(
+        `I know you were expecting a message here 😔. Well, Oops, caught you snooping around! 😄 Since you're here, let me officially welcome you to the Techinnover API. May your requests be swift and your responses even swifter. Cheers to exploring our API—Hello World! 🥂`,
+      );
     });
   });
 });
