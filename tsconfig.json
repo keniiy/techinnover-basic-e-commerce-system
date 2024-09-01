@@ -25,6 +25,16 @@
       "@common": ["./src/common/index.ts"],
       "@database/*": ["./src/common/database/*"],
       "@database": ["./src/common/database/index.ts"],
+      "@interfaces/*": ["./src/common/interfaces/*"],
+      "@interfaces": ["./src/common/interfaces/index.ts"],
+      "@src/*": ["./src/*"],
+      "@middlewares/*": ["./src/common/middlewares/*"],
+      "@middlewares": ["./src/common/middlewares/index.ts"],
+      "@pipes/*": ["./src/common/pipes/*"],
+      "@pipes": ["./src/common/pipes/index.ts"],
+      "@bootstrap/*": ["./src/common/bootstrap/*"],
+      "@bootstrap": ["./src/common/bootstrap/index.ts"],
     }
-  }
+  },
+  "include": ["src/**/*.ts"]
 }
