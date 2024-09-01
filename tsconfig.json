@@ -35,6 +35,10 @@
       "@pipes": ["./src/common/pipes/index.ts"],
       "@bootstrap/*": ["./src/common/bootstrap/*"],
       "@bootstrap": ["./src/common/bootstrap/index.ts"],
+      "@constants/*": ["./src/common/constants/*"],
+      "@constants": ["./src/common/constants/index.ts"],
+      "@config/*": ["./src/common/config/*"],
+      "@config": ["./src/common/config/index.ts"]
     }
   },
   "include": [

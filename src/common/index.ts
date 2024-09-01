@@ -4,3 +4,5 @@ export * from './interfaces';
 export * from './middlewares';
 export * from './pipes';
 export * from './bootstrap';
+export * from './constants';
+export * from './config';

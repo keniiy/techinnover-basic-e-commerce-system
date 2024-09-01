@@ -19,6 +19,8 @@
     "^@src/(.*)$": "<rootDir>/../src/$1",
     "^@middlewares/(.*)$": "<rootDir>/../src/common/middlewares/$1",
     "^@pipes/(.*)$": "<rootDir>/../src/common/pipes/$1",
-    "^@bootstrap/(.*)$": "<rootDir>/../src/common/bootstrap/$1"
+    "^@bootstrap/(.*)$": "<rootDir>/../src/common/bootstrap/$1",
+    "^@constants/(.*)$": "<rootDir>/../src/common/constants/$1",
+    "^@config/(.*)$": "<rootDir>/../src/common/config/$1"
   }
 }
