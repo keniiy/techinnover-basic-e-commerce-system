@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { CreateOnboardingDto } from './dto/create-onboarding.dto';
-import { UpdateOnboardingDto } from './dto/update-onboarding.dto';
+import { CreateOnboardingDto } from '../dto/version1';
+import { UpdateOnboardingDto } from '../dto/version1';
 
 @Injectable()
-export class OnboardingService {
+export class OnboardingServiceVersion1 {
   create(createOnboardingDto: CreateOnboardingDto) {
     return 'This action adds a new onboarding';
   }
