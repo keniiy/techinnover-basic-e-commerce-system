@@ -38,12 +38,16 @@
       "@constants/*": ["./src/common/constants/*"],
       "@constants": ["./src/common/constants/index.ts"],
       "@config/*": ["./src/common/config/*"],
-      "@config": ["./src/common/config/index.ts"]
+      "@config": ["./src/common/config/index.ts"],
+      "@DAL/*": ["./src/DAL/*"],
+      "@DAL": ["./src/DAL/index.ts"],
+      "@types/*": ["./src/common/@types/*"],
+      "@types": ["./src/common/@types/index.ts"]
     }
   },
   "include": [
     "src/**/*.ts",
-    "test/**/*.ts"  // Include test files
+    "test/**/*.ts"
   ],
   "exclude": [
     "node_modules"

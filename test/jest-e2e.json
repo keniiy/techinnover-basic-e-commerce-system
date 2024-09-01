@@ -21,6 +21,8 @@
     "^@pipes/(.*)$": "<rootDir>/../src/common/pipes/$1",
     "^@bootstrap/(.*)$": "<rootDir>/../src/common/bootstrap/$1",
     "^@constants/(.*)$": "<rootDir>/../src/common/constants/$1",
-    "^@config/(.*)$": "<rootDir>/../src/common/config/$1"
+    "^@config/(.*)$": "<rootDir>/../src/common/config/$1",
+    "@DAL/(.*)$": "<rootDir>/../src/DAL/$1",
+    "@types/(.*)$": "<rootDir>/../src/common/@types/$1"
   }
 }
