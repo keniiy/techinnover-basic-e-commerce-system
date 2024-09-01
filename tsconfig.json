@@ -28,6 +28,7 @@
       "@interfaces/*": ["./src/common/interfaces/*"],
       "@interfaces": ["./src/common/interfaces/index.ts"],
       "@src/*": ["./src/*"],
+      "@src": ["./src/index.ts"],
       "@middlewares/*": ["./src/common/middlewares/*"],
       "@middlewares": ["./src/common/middlewares/index.ts"],
       "@pipes/*": ["./src/common/pipes/*"],
@@ -36,5 +37,11 @@
       "@bootstrap": ["./src/common/bootstrap/index.ts"],
     }
   },
-  "include": ["src/**/*.ts"]
+  "include": [
+    "src/**/*.ts",
+    "test/**/*.ts"  // Include test files
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

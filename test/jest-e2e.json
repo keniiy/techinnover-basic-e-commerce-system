@@ -4,6 +4,21 @@
   "testEnvironment": "node",
   "testRegex": ".e2e-spec.ts$",
   "transform": {
-    "^.+\\.(t|j)s$": "ts-jest"
+    "^.+\\.(t|j)s$": [
+      "ts-jest",
+      {
+        "tsconfig": "<rootDir>/../tsconfig.json"
+      }
+    ]
+  },
+  "moduleNameMapper": {
+    "^@cmd/(.*)$": "<rootDir>/../src/cmd/$1",
+    "^@common/(.*)$": "<rootDir>/../src/common/$1",
+    "^@database/(.*)$": "<rootDir>/../src/common/database/$1",
+    "^@interfaces/(.*)$": "<rootDir>/../src/common/interfaces/$1",
+    "^@src/(.*)$": "<rootDir>/../src/$1",
+    "^@middlewares/(.*)$": "<rootDir>/../src/common/middlewares/$1",
+    "^@pipes/(.*)$": "<rootDir>/../src/common/pipes/$1",
+    "^@bootstrap/(.*)$": "<rootDir>/../src/common/bootstrap/$1"
   }
 }
