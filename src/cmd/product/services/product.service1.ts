@@ -75,12 +75,11 @@ export class ProductServiceVersion1 {
       ownerId: new Types.ObjectId(user.id),
     });
 
-    if (!product) {
+    if (!product)
       return new ProductErrorResponseDto(
         HttpStatus.NOT_FOUND,
         'Product not found or not owned by user',
       );
-    }
 
     const updatedProduct = await this.productRepository.findOneAndUpdate(
       { _id: new Types.ObjectId(productId) },
@@ -112,12 +111,11 @@ export class ProductServiceVersion1 {
       ownerId: new Types.ObjectId(user.id),
     });
 
-    if (!product) {
+    if (!product)
       return new ProductErrorResponseDto(
         HttpStatus.NOT_FOUND,
         'Product not found or not owned by user',
       );
-    }
 
     await this.productRepository.findOneAndDelete({
       _id: new Types.ObjectId(productId),
@@ -144,12 +142,11 @@ export class ProductServiceVersion1 {
       new Types.ObjectId(productId).toString(),
     );
 
-    if (!product) {
+    if (!product)
       return new ProductErrorResponseDto(
         HttpStatus.NOT_FOUND,
         'Product not found',
       );
-    }
 
     product.isApproved = true;
     const approvedProduct = await this.productRepository.findOneAndUpdate(
@@ -180,12 +177,12 @@ export class ProductServiceVersion1 {
     ProductSuccessResponseDto<ProductResponseDto[]> | ProductErrorResponseDto
   > {
     const condition: any = { isApproved: true };
-    if (findProductsDto.search) {
+
+    if (findProductsDto.search)
       condition.$or = [
         { name: { $regex: findProductsDto.search, $options: 'i' } },
         { description: { $regex: findProductsDto.search, $options: 'i' } },
       ];
-    }
 
     const products = await this.productRepository.findManyWithPagination(
       condition,
@@ -222,9 +219,8 @@ export class ProductServiceVersion1 {
   ): Promise<
     ProductSuccessResponseDto<ProductResponseDto> | ProductErrorResponseDto
   > {
-    if (!Types.ObjectId.isValid(productId)) {
+    if (!Types.ObjectId.isValid(productId))
       throw new BadRequestException('Invalid product ID format');
-    }
 
     const populateOptions = findProductDto.populate
       ? Array.isArray(findProductDto.populate)
@@ -240,16 +236,16 @@ export class ProductServiceVersion1 {
         : undefined,
     );
 
-    if (!product) {
+    if (!product)
       return new ProductErrorResponseDto(
         HttpStatus.NOT_FOUND,
         'Product not found',
       );
-    }
 
     const owner = await this.userRepository.findById(
       product.ownerId.toString(),
     );
+
     const ownerDto = new UserResponseDto(owner);
 
     return new ProductSuccessResponseDto(
@@ -271,17 +267,16 @@ export class ProductServiceVersion1 {
   ): Promise<
     ProductSuccessResponseDto<ProductResponseDto[]> | ProductErrorResponseDto
   > {
-    if (!Types.ObjectId.isValid(user.id)) {
+    if (!Types.ObjectId.isValid(user.id))
       throw new BadRequestException('Invalid user ID format');
-    }
 
     const condition: any = { ownerId: new Types.ObjectId(user.id) };
-    if (findProductsDto.search) {
+
+    if (findProductsDto.search)
       condition.$or = [
         { name: { $regex: findProductsDto.search, $options: 'i' } },
         { description: { $regex: findProductsDto.search, $options: 'i' } },
       ];
-    }
 
     const products = await this.productRepository.findManyWithPagination(
       condition,
@@ -310,15 +305,15 @@ export class ProductServiceVersion1 {
     ProductSuccessResponseDto<ProductResponseDto[]> | ProductErrorResponseDto
   > {
     const condition: any = {};
-    if (findProductsDto.isApproved !== undefined) {
+
+    if (findProductsDto.isApproved !== undefined)
       condition['isApproved'] = findProductsDto.isApproved;
-    }
-    if (findProductsDto.search) {
+
+    if (findProductsDto.search)
       condition.$or = [
         { name: { $regex: findProductsDto.search, $options: 'i' } },
         { description: { $regex: findProductsDto.search, $options: 'i' } },
       ];
-    }
 
     const products = await this.productRepository.findManyWithPagination(
       condition,

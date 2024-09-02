@@ -22,9 +22,8 @@ export class UserServiceVersion1 {
   ): Promise<UserSuccessResponseDto<UserResponseDto> | UserErrorResponseDto> {
     const user = await this.userRepository.findById(userId);
 
-    if (!user) {
+    if (!user)
       return new UserErrorResponseDto(HttpStatus.NOT_FOUND, 'User not found');
-    }
 
     return new UserSuccessResponseDto(
       HttpStatus.OK,

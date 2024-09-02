@@ -39,9 +39,8 @@ export class AuthServiceVersion1 {
 
     if (!user) return null;
 
-    if (user.status === UserStatus.BANNED) {
+    if (user.status === UserStatus.BANNED)
       throw new UnauthorizedException('Your account has been banned.');
-    }
 
     if (await comparePassword(pass, user.password)) {
       const { _id, name, role } = user;
@@ -70,12 +69,12 @@ export class AuthServiceVersion1 {
   ): Promise<UserSuccessResponseDto<AuthResponseDto> | UserErrorResponseDto> {
     const user = await this.validateUser(loginDto.email, loginDto.password);
 
-    if (!user) {
+    if (!user)
       return new UserErrorResponseDto(
         HttpStatus.UNAUTHORIZED,
         'Invalid credentials',
       );
-    }
+
     return new UserSuccessResponseDto(
       HttpStatus.OK,
       `${user.role} logged in successfully`,
@@ -94,23 +93,21 @@ export class AuthServiceVersion1 {
     changePasswordDto: ChangePasswordDto,
   ): Promise<UserSuccessResponseDto<void> | UserErrorResponseDto> {
     const user = await this.userRepository.findOne({ _id: userId });
-    if (!user) {
+    if (!user)
       return new UserErrorResponseDto(
         HttpStatus.UNAUTHORIZED,
         'User not found',
       );
-    }
 
     const passwordsMatch = await comparePassword(
       changePasswordDto.currentPassword,
       user.password,
     );
-    if (!passwordsMatch) {
+    if (!passwordsMatch)
       return new UserErrorResponseDto(
         HttpStatus.BAD_REQUEST,
         'Current password is incorrect',
       );
-    }
 
     user.password = await hashPassword(changePasswordDto.newPassword);
     await this.userRepository.findOneAndUpdate({ _id: userId }, user);
@@ -136,12 +133,11 @@ export class AuthServiceVersion1 {
 
     const user = await this.userRepository.findById(decoded.userId);
 
-    if (!user) {
+    if (!user)
       return new UserErrorResponseDto(
         HttpStatus.UNAUTHORIZED,
         'User not found',
       );
-    }
 
     const { accessToken, refreshToken } =
       await this.tokenService.handleCreateTokens(
