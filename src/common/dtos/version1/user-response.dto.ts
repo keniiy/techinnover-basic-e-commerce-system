@@ -9,26 +9,13 @@ export class UserResponseDto {
   @ApiProperty({ example: 'John Doe' })
   name: string;
 
-  @ApiProperty({ example: 'john.doe@example.com' })
-  email: string;
+  @ApiProperty({ example: 'user' })
+  role: string;
 
-  @ApiProperty({ example: '2024-08-31T01:41:20.407Z' })
-  createdAt: Date;
-
-  @ApiProperty({ example: '2024-08-31T01:41:20.407Z' })
-  updatedAt: Date;
-
-  /**
-   * Constructs a new UserResponseDto from a UserDocument.
-   *
-   * @param user The UserDocument to construct from.
-   */
-  constructor(user: UserDocument) {
-    this.id = user._id.toString();
-    this.name = user.name;
-    this.email = user.email;
-    this.createdAt = user.createdAt;
-    this.updatedAt = user.updatedAt;
+  constructor(partial: Partial<UserResponseDto>) {
+    this.id = partial.id;
+    this.name = partial.name;
+    this.role = partial.role;
   }
 }
 

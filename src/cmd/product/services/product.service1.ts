@@ -1,3 +1,4 @@
+import { PopulateOptions, Types } from 'mongoose';
 import { UserRepository } from '@common/DAL';
 import { ProductModel } from '@common/DAL/products/models';
 import { ProductRepository } from '@common/DAL/products/repositories/product.repository';
@@ -8,9 +9,10 @@ import {
   UserResponseDto,
 } from '@common/dtos';
 import { IUserAuthenticated } from '@common/interfaces';
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
 import { FindProductDto } from '../dto/version1/find-product.dto';
 import { FindProductsDto } from '../dto/version1';
+import { UserRole } from '@common/enums';
 
 @Injectable()
 export class ProductServiceVersion1 {
@@ -27,7 +29,7 @@ export class ProductServiceVersion1 {
   > {
     const newProduct = await this.productRepository.create({
       ...productData,
-      ownerId: user.id,
+      ownerId: new Types.ObjectId(user.id),
       isApproved: false,
     });
 
@@ -49,8 +51,8 @@ export class ProductServiceVersion1 {
     ProductSuccessResponseDto<ProductResponseDto> | ProductErrorResponseDto
   > {
     const product = await this.productRepository.findOne({
-      _id: productId,
-      ownerId: user.id,
+      _id: new Types.ObjectId(productId),
+      ownerId: new Types.ObjectId(user.id),
     });
 
     if (!product) {
@@ -61,7 +63,7 @@ export class ProductServiceVersion1 {
     }
 
     const updatedProduct = await this.productRepository.findOneAndUpdate(
-      { _id: productId },
+      { _id: new Types.ObjectId(productId) },
       updateData,
     );
 
@@ -80,8 +82,8 @@ export class ProductServiceVersion1 {
     productId: string,
   ): Promise<ProductSuccessResponseDto<void> | ProductErrorResponseDto> {
     const product = await this.productRepository.findOne({
-      _id: productId,
-      ownerId: user.id,
+      _id: new Types.ObjectId(productId),
+      ownerId: new Types.ObjectId(user.id),
     });
 
     if (!product) {
@@ -91,7 +93,9 @@ export class ProductServiceVersion1 {
       );
     }
 
-    await this.productRepository.findOneAndDelete({ _id: productId });
+    await this.productRepository.findOneAndDelete({
+      _id: new Types.ObjectId(productId),
+    });
 
     return new ProductSuccessResponseDto(
       HttpStatus.OK,
@@ -105,7 +109,9 @@ export class ProductServiceVersion1 {
   ): Promise<
     ProductSuccessResponseDto<ProductResponseDto> | ProductErrorResponseDto
   > {
-    const product = await this.productRepository.findById(productId);
+    const product = await this.productRepository.findById(
+      new Types.ObjectId(productId).toString(),
+    );
 
     if (!product) {
       return new ProductErrorResponseDto(
@@ -116,11 +122,13 @@ export class ProductServiceVersion1 {
 
     product.isApproved = true;
     const approvedProduct = await this.productRepository.findOneAndUpdate(
-      { _id: productId },
+      { _id: new Types.ObjectId(productId) },
       product,
     );
 
-    const owner = await this.userRepository.findById(product.ownerId);
+    const owner = await this.userRepository.findById(
+      approvedProduct.ownerId.toString(),
+    );
     const ownerDto = new UserResponseDto(owner);
 
     return new ProductSuccessResponseDto(
@@ -135,18 +143,27 @@ export class ProductServiceVersion1 {
   ): Promise<
     ProductSuccessResponseDto<ProductResponseDto[]> | ProductErrorResponseDto
   > {
-    const condition = { isApproved: true };
+    const condition: any = { isApproved: true };
+    if (findProductsDto.search) {
+      condition.$or = [
+        { name: { $regex: findProductsDto.search, $options: 'i' } },
+        { description: { $regex: findProductsDto.search, $options: 'i' } },
+      ];
+    }
+
     const products = await this.productRepository.findManyWithPagination(
       condition,
       findProductsDto,
     );
 
-    const owners = await Promise.all(
-      products.docs.map((product) =>
-        this.userRepository.findById(product.ownerId),
-      ),
+    const ownerDtos = await Promise.all(
+      products.docs.map(async (product) => {
+        const owner = await this.userRepository.findById(
+          product.ownerId.toString(),
+        );
+        return new UserResponseDto(owner);
+      }),
     );
-    const ownerDtos = owners.map((owner) => new UserResponseDto(owner));
 
     return new ProductSuccessResponseDto(
       HttpStatus.OK,
@@ -163,9 +180,22 @@ export class ProductServiceVersion1 {
   ): Promise<
     ProductSuccessResponseDto<ProductResponseDto> | ProductErrorResponseDto
   > {
+    if (!Types.ObjectId.isValid(productId)) {
+      throw new BadRequestException('Invalid product ID format');
+    }
+
+    const populateOptions = findProductDto.populate
+      ? Array.isArray(findProductDto.populate)
+        ? findProductDto.populate.map((option) => option)
+        : [findProductDto.populate]
+      : undefined;
+
     const product = await this.productRepository.findOne(
-      { _id: productId, isApproved: true },
-      findProductDto.populate,
+      { _id: new Types.ObjectId(productId), isApproved: true },
+      undefined,
+      populateOptions
+        ? { populate: populateOptions as string[] | PopulateOptions[] }
+        : undefined,
     );
 
     if (!product) {
@@ -175,7 +205,9 @@ export class ProductServiceVersion1 {
       );
     }
 
-    const owner = await this.userRepository.findById(product.ownerId);
+    const owner = await this.userRepository.findById(
+      product.ownerId.toString(),
+    );
     const ownerDto = new UserResponseDto(owner);
 
     return new ProductSuccessResponseDto(
@@ -191,7 +223,18 @@ export class ProductServiceVersion1 {
   ): Promise<
     ProductSuccessResponseDto<ProductResponseDto[]> | ProductErrorResponseDto
   > {
-    const condition = { ownerId: user.id };
+    if (!Types.ObjectId.isValid(user.id)) {
+      throw new BadRequestException('Invalid user ID format');
+    }
+
+    const condition: any = { ownerId: new Types.ObjectId(user.id) };
+    if (findProductsDto.search) {
+      condition.$or = [
+        { name: { $regex: findProductsDto.search, $options: 'i' } },
+        { description: { $regex: findProductsDto.search, $options: 'i' } },
+      ];
+    }
+
     const products = await this.productRepository.findManyWithPagination(
       condition,
       findProductsDto,
@@ -205,6 +248,53 @@ export class ProductServiceVersion1 {
       HttpStatus.OK,
       'User products retrieved successfully',
       products.docs.map((product) => new ProductResponseDto(product, ownerDto)),
+    );
+  }
+
+  async findAllProducts(
+    findProductsDto: FindProductsDto,
+  ): Promise<
+    ProductSuccessResponseDto<ProductResponseDto[]> | ProductErrorResponseDto
+  > {
+    const condition: any = {};
+    if (findProductsDto.isApproved !== undefined) {
+      condition['isApproved'] = findProductsDto.isApproved;
+    }
+    if (findProductsDto.search) {
+      condition.$or = [
+        { name: { $regex: findProductsDto.search, $options: 'i' } },
+        { description: { $regex: findProductsDto.search, $options: 'i' } },
+      ];
+    }
+
+    const products = await this.productRepository.findManyWithPagination(
+      condition,
+      findProductsDto,
+    );
+
+    const ownerDtos = await Promise.all(
+      products.docs.map(async (product) => {
+        if (findProductsDto.populate?.includes('ownerId')) {
+          const owner = await this.userRepository.findById(
+            product.ownerId.toString(),
+          );
+          return new UserResponseDto(owner);
+        } else {
+          return new UserResponseDto({
+            id: product.ownerId.toString(),
+            name: 'Unknown',
+            role: UserRole.USER,
+          });
+        }
+      }),
+    );
+
+    return new ProductSuccessResponseDto(
+      HttpStatus.OK,
+      'Products retrieved successfully',
+      products.docs.map(
+        (product, index) => new ProductResponseDto(product, ownerDtos[index]),
+      ),
     );
   }
 }

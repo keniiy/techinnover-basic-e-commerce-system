@@ -30,6 +30,7 @@ import {
 import { FindProductsDto, FindProductDto } from '../dto/version1';
 import { ProductServiceVersion1 } from '../services/product.service1';
 import { CreateProductDto } from '../dto/version1/create-product.dto';
+import { RolesGuard } from '@common/guards/roles.guard';
 
 @ApiTags('Product Management V1')
 @ApiBearerAuth()
@@ -59,6 +60,27 @@ export class ProductControllerVersion1 {
     @Body() createProductDto: CreateProductDto,
   ) {
     return this.productService.createProduct(user, createProductDto);
+  }
+
+  @Get('user')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Get All Products of Authenticated User' })
+  @ApiQuery({ type: FindProductsDto })
+  @ApiResponse({
+    status: 200,
+    description: 'User products retrieved successfully',
+    type: ProductSuccessResponseDto<ProductResponseDto[]>,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad request',
+    type: ProductErrorResponseDto,
+  })
+  async getUserProducts(
+    @AuthenticatedUser() user: IUserAuthenticated,
+    @Query() findProductsDto: FindProductsDto,
+  ) {
+    return this.productService.findUserProducts(user, findProductsDto);
   }
 
   @Patch(':id')
@@ -163,13 +185,14 @@ export class ProductControllerVersion1 {
     return this.productService.findProduct(productId, findProductDto);
   }
 
-  @Get('user')
-  @UseGuards(JwtAuthGuard)
-  @ApiOperation({ summary: 'Get All Products of Authenticated User' })
+  @Get('admin/all')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  @ApiOperation({ summary: 'Get All Products (Admin Only)' })
   @ApiQuery({ type: FindProductsDto })
   @ApiResponse({
     status: 200,
-    description: 'User products retrieved successfully',
+    description: 'Products retrieved successfully',
     type: ProductSuccessResponseDto<ProductResponseDto[]>,
   })
   @ApiResponse({
@@ -177,10 +200,7 @@ export class ProductControllerVersion1 {
     description: 'Bad request',
     type: ProductErrorResponseDto,
   })
-  async getUserProducts(
-    @AuthenticatedUser() user: IUserAuthenticated,
-    @Query() findProductsDto: FindProductsDto,
-  ) {
-    return this.productService.findUserProducts(user, findProductsDto);
+  async getAllProducts(@Query() findProductsDto: FindProductsDto) {
+    return this.productService.findAllProducts(findProductsDto);
   }
 }

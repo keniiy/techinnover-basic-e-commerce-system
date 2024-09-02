@@ -1,7 +1,7 @@
 import { ProductDocument } from '@common/DAL/products/models';
-import { UserResponseDto } from '@common/index';
+import { UserResponseDto, UserRole } from '@common/index';
 import { ApiProperty, getSchemaPath, ApiExtraModels } from '@nestjs/swagger';
-import { PaginateResult } from 'mongoose';
+import mongoose, { PaginateResult } from 'mongoose';
 
 export class ProductResponseDto {
   @ApiProperty({ example: '64e839c5f1a1b2c4d4f7890b' })
@@ -34,19 +34,13 @@ export class ProductResponseDto {
   @ApiProperty({ example: '2024-08-31T01:41:20.407Z' })
   updatedAt: Date;
 
-  /**
-   * Constructs a new ProductResponseDto from a ProductDocument.
-   *
-   * @param product The ProductDocument to construct from.
-   * @param owner The UserResponseDto representing the product's owner.
-   */
   constructor(product: ProductDocument, owner: UserResponseDto) {
     this.id = product._id.toString();
     this.name = product.name;
     this.price = product.price;
     this.description = product.description;
     this.quantity = product.quantity;
-    this.ownerId = product.ownerId;
+    this.ownerId = product.ownerId.toString();
     this.owner = owner;
     this.isApproved = product.isApproved;
     this.createdAt = product.createdAt;
@@ -71,13 +65,6 @@ export class ProductSuccessResponseDto<T> {
   })
   data: T;
 
-  /**
-   * Constructs a new ProductSuccessResponseDto with the given properties.
-   *
-   * @param statusCode The HTTP status code to include in the response.
-   * @param message The message to include in the response.
-   * @param data The data to include in the response.
-   */
   constructor(statusCode: number, message: string, data: T) {
     this.success = true;
     this.statusCode = statusCode;
@@ -96,12 +83,6 @@ export class ProductErrorResponseDto {
   @ApiProperty({ example: 'Operation failed' })
   message: string;
 
-  /**
-   * Constructs a new ProductErrorResponseDto with the given properties.
-   *
-   * @param statusCode The HTTP status code to include in the response.
-   * @param message The message to include in the response.
-   */
   constructor(statusCode: number, message: string) {
     this.success = false;
     this.statusCode = statusCode;
@@ -119,12 +100,6 @@ export class ProductDeleteSuccessResponseDto {
   @ApiProperty({ example: 'Product deleted successfully' })
   message: string;
 
-  /**
-   * Constructs a new ProductDeleteSuccessResponseDto with the given properties.
-   *
-   * @param statusCode The HTTP status code to include in the response.
-   * @param message The message to include in the response.
-   */
   constructor(statusCode: number, message: string) {
     this.success = true;
     this.statusCode = statusCode;
@@ -167,12 +142,6 @@ export class ProductPaginatedResponseDto {
   @ApiProperty({ type: [ProductResponseDto] })
   docs: ProductResponseDto[];
 
-  /**
-   * Constructs a new ProductPaginatedResponseDto from a PaginateResult of ProductDocument.
-   *
-   * @param paginatedResult The PaginateResult<ProductDocument> to construct from.
-   * @param owners The array of UserResponseDto representing product owners.
-   */
   constructor(
     paginatedResult: PaginateResult<ProductDocument>,
     owners: UserResponseDto[],
@@ -188,7 +157,16 @@ export class ProductPaginatedResponseDto {
     this.nextPage = paginatedResult.nextPage;
     this.prevPage = paginatedResult.prevPage;
     this.docs = paginatedResult.docs.map(
-      (product, index) => new ProductResponseDto(product, owners[index]),
+      (product, index) =>
+        new ProductResponseDto(
+          product,
+          owners[index] ||
+            new UserResponseDto({
+              id: new mongoose.Types.ObjectId().toString(),
+              name: 'Unknown',
+              role: UserRole.USER,
+            }),
+        ),
     );
   }
 }

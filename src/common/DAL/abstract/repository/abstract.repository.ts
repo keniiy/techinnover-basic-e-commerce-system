@@ -7,6 +7,7 @@ import {
   Document,
   FilterQuery,
   Model,
+  PopulateOptions,
   ProjectionType,
   QueryOptions,
   SaveOptions,
@@ -39,15 +40,34 @@ export abstract class AbstractRepository<T extends Document>
    *
    * @param filterQuery The filter query to use when finding the document.
    * @param projection Optional projection object that limits the fields returned in the document.
-   * @param options Additional query options.
+   * @param options Additional query options, including population.
    * @returns The found document or null if no document was found.
    */
   async findOne(
     filterQuery: FilterQuery<T>,
     projection?: ProjectionType<T>,
-    options?: QueryOptions,
+    options?: QueryOptions & {
+      populate?: string | string[] | PopulateOptions | PopulateOptions[];
+    },
   ): Promise<T | null> {
-    return this.model.findOne(filterQuery, projection, options).exec();
+    let query = this.model.findOne(filterQuery, projection);
+
+    if (options?.populate) {
+      if (Array.isArray(options.populate)) {
+        query = query.populate(
+          options.populate as Array<string | PopulateOptions>,
+        );
+      } else if (
+        typeof options.populate === 'string' ||
+        typeof options.populate === 'object'
+      ) {
+        query = query.populate([options.populate] as
+          | [string]
+          | PopulateOptions);
+      }
+    }
+
+    return query.exec();
   }
 
   /**
@@ -153,7 +173,7 @@ export abstract class AbstractRepository<T extends Document>
     condition: FilterQuery<T>,
     findMany: FindMany,
   ): Promise<PaginateResult<T>> {
-    const { offset, limit, sort, page } = findMany;
+    const { offset, limit, sort, page, populate } = findMany;
     const options: PaginationOptions = { sort: {}, offset, limit, page };
 
     if (sort) {
@@ -164,7 +184,16 @@ export abstract class AbstractRepository<T extends Document>
       });
     }
 
-    return (this.model as any).paginate(condition, options);
+    let query = (this.model as any).paginate(condition, options);
+
+    if (populate) {
+      const populateArray = Array.isArray(populate) ? populate : [populate];
+      populateArray.forEach((pop) => {
+        query = query.populate(pop);
+      });
+    }
+
+    return query;
   }
 
   /**

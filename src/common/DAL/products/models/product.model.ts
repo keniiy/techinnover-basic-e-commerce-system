@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 import * as mongoosePaginate from 'mongoose-paginate-v2';
 import { Collections } from '@enums/index';
 
@@ -17,8 +17,8 @@ export class ProductModel {
   @Prop({ required: true })
   quantity: number;
 
-  @Prop({ required: true })
-  ownerId: string;
+  @Prop({ type: Types.ObjectId, ref: Collections.USERS, required: true })
+  ownerId: Types.ObjectId;
 
   @Prop({ required: true, default: false })
   isApproved: boolean;
