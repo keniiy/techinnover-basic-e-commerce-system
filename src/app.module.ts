@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CommonModule } from '@common/index';
@@ -11,6 +11,7 @@ import { AuthModule } from './cmd/auth/auth.module';
 import { ProductModule } from './cmd/product/product.module';
 import { UserModule } from './cmd/user/user.module';
 import { AdminModule } from './cmd/admin/admin.module';
+import { HttpLoggerMiddleware } from '@middlewares/index';
 
 @Module({
   imports: [
@@ -36,4 +37,14 @@ import { AdminModule } from './cmd/admin/admin.module';
     },
   ],
 })
-export class AppModule {}
+export class AppModule {
+  /**
+   * Configures the global middleware for the application.
+   * This middleware applies the logger middleware to all routes.
+   *
+   * @param consumer The middleware consumer to use for configuration.
+   */
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(HttpLoggerMiddleware).forRoutes('*');
+  }
+}
