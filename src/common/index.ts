@@ -8,3 +8,5 @@ export * from './constants';
 export * from './config';
 export * from './DAL';
 export * from './@types';
+export * from './enums';
+export * from './utils';

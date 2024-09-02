@@ -42,7 +42,13 @@
       "@DAL/*": ["./src/DAL/*"],
       "@DAL": ["./src/DAL/index.ts"],
       "@types/*": ["./src/common/@types/*"],
-      "@types": ["./src/common/@types/index.ts"]
+      "@types": ["./src/common/@types/index.ts"],
+      "@enums/*": ["./src/common/enums/*"],
+      "@enums": ["./src/common/enums/index.ts"],
+      "@utils/*": ["./src/common/utils/*"],
+      "@utils": ["./src/common/utils/index.ts"],
+      "@scripts/*": ["./src/common/scripts/*"], 
+      "@scripts": ["src/common/DAL/database-scripts/index.ts"]
     }
   },
   "include": [

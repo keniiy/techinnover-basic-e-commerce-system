@@ -23,6 +23,9 @@
     "^@constants/(.*)$": "<rootDir>/../src/common/constants/$1",
     "^@config/(.*)$": "<rootDir>/../src/common/config/$1",
     "@DAL/(.*)$": "<rootDir>/../src/DAL/$1",
-    "@types/(.*)$": "<rootDir>/../src/common/@types/$1"
+    "@types/(.*)$": "<rootDir>/../src/common/@types/$1",
+    "@enums/(.*)$": "<rootDir>/../src/common/enums/$1",
+    "@utils/(.*)$": "<rootDir>/../src/common/utils/$1",
+    "@scripts/(.*)$": "<rootDir>/../src/common/scripts/$1"
   }
 }
