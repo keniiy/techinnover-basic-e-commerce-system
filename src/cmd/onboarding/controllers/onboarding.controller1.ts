@@ -15,6 +15,10 @@ import {
   UserSuccessResponseDto,
   UserResponseDto,
 } from '@common/dtos';
+import {
+  EmailAvailabilityResponseDto,
+  EmailFalseAvailabilityResponseDto,
+} from '@common/dtos/version1/email-availability-response.dto';
 
 @ApiTags('Onboarding V1')
 @ApiBearerAuth()
@@ -81,12 +85,12 @@ export class OnboardingControllerVersion1 {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Email availability check successful',
-    type: UserSuccessResponseDto<{ available: boolean }>,
+    type: UserSuccessResponseDto<EmailAvailabilityResponseDto>,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: 'Invalid email format',
-    type: UserErrorResponseDto,
+    type: UserSuccessResponseDto<EmailFalseAvailabilityResponseDto>,
   })
   async checkEmail(@Query('email') email: string) {
     return this.onboardingServiceVersion1.checkEmailAvailability(email);

@@ -16,6 +16,7 @@ import {
   UserErrorResponseDto,
 } from '@common/dtos';
 import { ResponseMessages } from '@common/constants';
+import { EmailAvailabilityResponseDto } from '@common/dtos/version1/email-availability-response.dto';
 
 @Injectable()
 export class OnboardingServiceVersion1 implements OnModuleInit {
@@ -60,13 +61,16 @@ export class OnboardingServiceVersion1 implements OnModuleInit {
 
   async checkEmailAvailability(
     email: string,
-  ): Promise<UserSuccessResponseDto<{ available: boolean }>> {
+  ): Promise<
+    UserSuccessResponseDto<EmailAvailabilityResponseDto> | UserErrorResponseDto
+  > {
     const userExists = await this.userRepository.findOne({ email });
+    const isAvailable = !userExists;
 
     return new UserSuccessResponseDto(
       HttpStatus.OK,
       'Email availability check successful',
-      { available: !userExists },
+      new EmailAvailabilityResponseDto(isAvailable),
     );
   }
 
