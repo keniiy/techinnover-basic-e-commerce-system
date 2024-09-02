@@ -13,3 +13,5 @@ export * from './utils';
 export * from './dtos';
 export * from './guards';
 export * from './decorators';
+export * from './integrations';
+export * from './strategies';

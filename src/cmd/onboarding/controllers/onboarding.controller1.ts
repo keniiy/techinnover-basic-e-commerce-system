@@ -8,7 +8,7 @@ import {
 } from '@nestjs/swagger';
 import { OnboardingServiceVersion1 } from '../services/onboarding.service1';
 import { UserRole } from '@common/enums';
-import { CreateUserDto } from '../dto';
+import { CreateUserDto } from '../dto/version1/create-user.dto';
 import {
   UserErrorResponseDto,
   UserSuccessResponseDto,

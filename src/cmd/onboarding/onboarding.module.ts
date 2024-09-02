@@ -5,9 +5,9 @@ import { OnboardingServiceVersion1 } from './services';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Collections } from '@common/enums';
 import { UserRepository, UserSchema } from '@common/DAL';
-import { JwtStrategy } from '@common/strategies/jwt.strategy';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
+import { JwtPassportStrategy } from '@common/strategies';
 
 @Module({
   imports: [
@@ -38,6 +38,6 @@ import { PassportModule } from '@nestjs/passport';
     }),
   ],
   controllers: [OnboardingControllerVersion1],
-  providers: [OnboardingServiceVersion1, UserRepository, JwtStrategy],
+  providers: [OnboardingServiceVersion1, UserRepository, JwtPassportStrategy],
 })
 export class OnboardingModule {}

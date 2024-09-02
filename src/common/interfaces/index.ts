@@ -4,3 +4,4 @@ export * from './i-success-response.interface';
 export * from './i-error-response.interface';
 export * from './i-user.interface';
 export * from './i-seeder.interface';
+export * from './i-user-authenticated.interface';
