@@ -7,7 +7,7 @@ import {
   UserPaginatedResponseDto,
 } from '@common/dtos';
 import { HttpStatus } from '@nestjs/common';
-import { UserStatus } from '@common/enums';
+import { UserRole, UserStatus } from '@common/enums';
 import { UpdateUserStatusDto } from '../dto/version1/update-user-status.dto';
 import { FindUsersDto } from '../dto';
 
@@ -20,9 +20,14 @@ export class AdminServiceVersion1 {
   ): Promise<UserSuccessResponseDto<UserResponseDto> | UserErrorResponseDto> {
     const user = await this.userRepository.findById(updateUserStatusDto.userId);
 
-    if (!user) {
+    if (!user)
       return new UserErrorResponseDto(HttpStatus.NOT_FOUND, 'User not found');
-    }
+
+    if (user.role === UserRole.SUPER_ADMIN)
+      return new UserErrorResponseDto(
+        HttpStatus.BAD_REQUEST,
+        'Super admin cannot be banned or unbanned',
+      );
 
     user.status = updateUserStatusDto.status;
     const updatedUser = await this.userRepository.findOneAndUpdate(

@@ -12,5 +12,5 @@ export class UpdateUserStatusDto {
     example: UserStatus.BANNED,
     description: 'Set to BANNED to ban the user, ACTIVE to unban',
   })
-  status: UserStatus;
+  status: UserStatus.BANNED;
 }

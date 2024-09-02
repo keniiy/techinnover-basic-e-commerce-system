@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserRepository } from '@common/DAL/users/repositories/user.repository';
 import {
   AuthResponseDto,
@@ -9,6 +9,7 @@ import { LoginDto, ChangePasswordDto, RefreshTokenDto } from '../dto/version1';
 import { comparePassword, hashPassword } from '@common/utils';
 import { HttpStatus } from '@nestjs/common';
 import { TokenService } from '@common/integrations';
+import { UserStatus } from '@common/enums';
 
 @Injectable()
 export class AuthServiceVersion1 {
@@ -22,10 +23,18 @@ export class AuthServiceVersion1 {
     pass: string,
   ): Promise<AuthResponseDto | null> {
     const user = await this.userRepository.findOne({ email });
-    if (user && (await comparePassword(pass, user.password))) {
+
+    if (!user) return null;
+
+    if (user.status === UserStatus.BANNED) {
+      throw new UnauthorizedException('Your account has been banned.');
+    }
+
+    if (await comparePassword(pass, user.password)) {
       const { _id, name, role } = user;
       const { accessToken, refreshToken } =
         await this.tokenService.handleCreateTokens(_id.toString(), role);
+
       return {
         accessToken,
         refreshToken,
@@ -34,6 +43,7 @@ export class AuthServiceVersion1 {
         role,
       };
     }
+
     return null;
   }
 
