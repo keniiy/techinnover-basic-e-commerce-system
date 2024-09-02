@@ -1,4 +1,12 @@
-import { Controller, Post, Body, HttpStatus, Query, Get } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  HttpStatus,
+  Query,
+  Get,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
@@ -19,6 +27,8 @@ import {
   EmailAvailabilityResponseDto,
   EmailFalseAvailabilityResponseDto,
 } from '@common/dtos/version1/email-availability-response.dto';
+import { Roles } from '@common/decorators';
+import { JwtAuthGuard } from '@common/guards';
 
 @ApiTags('Onboarding V1')
 @ApiBearerAuth()
@@ -55,6 +65,7 @@ export class OnboardingControllerVersion1 {
   }
 
   @Post('create-admin')
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Create a new admin (SuperAdmin only)' })
   @ApiBody({ type: CreateUserDto, description: 'The admin details' })
   @ApiResponse({
@@ -72,6 +83,7 @@ export class OnboardingControllerVersion1 {
     description: 'Admin with this email already exists',
     type: UserErrorResponseDto,
   })
+  @Roles(UserRole.SUPER_ADMIN)
   async createAdmin(@Body() createAdminDto: CreateUserDto) {
     return this.onboardingServiceVersion1.register(
       createAdminDto,

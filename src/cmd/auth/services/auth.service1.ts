@@ -50,7 +50,7 @@ export class AuthServiceVersion1 {
     }
     return new UserSuccessResponseDto(
       HttpStatus.OK,
-      'User logged in successfully',
+      `${user.role} logged in successfully`,
       user,
     );
   }

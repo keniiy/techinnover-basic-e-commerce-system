@@ -35,13 +35,16 @@ export class OnboardingServiceVersion1 implements OnModuleInit {
     createUserDto: CreateUserDto,
     role: UserRole,
   ): Promise<UserSuccessResponseDto<UserResponseDto> | UserErrorResponseDto> {
+    console.log(createUserDto);
+
     const userExists = await this.userRepository.findOne({
       email: createUserDto.email,
     });
 
-    if (userExists) {
-      throw new ConflictException(ResponseMessages.ALREADY_EXISTS(role));
-    }
+    if (userExists)
+      throw new ConflictException(
+        ResponseMessages.ALREADY_EXISTS(userExists.role),
+      );
 
     const hashedPassword = await hashPassword(createUserDto.password);
 
@@ -54,7 +57,7 @@ export class OnboardingServiceVersion1 implements OnModuleInit {
 
     return new UserSuccessResponseDto(
       HttpStatus.CREATED,
-      `${role} created successfully`,
+      `${newUser.role} created successfully`,
       new UserResponseDto(newUser),
     );
   }

@@ -1,3 +1,4 @@
+import { UserRole } from '@common/enums';
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
@@ -33,5 +34,5 @@ export class CreateUserDto {
   })
   @IsOptional()
   @IsString()
-  role?: string;
+  role?: UserRole.ADMIN;
 }
