@@ -1,6 +1,6 @@
 import { ProductDocument } from '@common/DAL/products/models';
 import { UserResponseDto } from '@common/index';
-import { ApiProperty, getSchemaPath } from '@nestjs/swagger';
+import { ApiProperty, getSchemaPath, ApiExtraModels } from '@nestjs/swagger';
 import { PaginateResult } from 'mongoose';
 
 export class ProductResponseDto {
@@ -22,10 +22,10 @@ export class ProductResponseDto {
   @ApiProperty({ example: '64e839c5f1a1b2c4d4f7890a' })
   ownerId: string;
 
-  @ApiProperty({ type: UserResponseDto })
+  @ApiProperty({ type: () => UserResponseDto })
   owner: UserResponseDto;
 
-  @ApiProperty({ example: false })
+  @ApiProperty({ example: true })
   isApproved: boolean;
 
   @ApiProperty({ example: '2024-08-31T01:41:20.407Z' })
@@ -38,6 +38,7 @@ export class ProductResponseDto {
    * Constructs a new ProductResponseDto from a ProductDocument.
    *
    * @param product The ProductDocument to construct from.
+   * @param owner The UserResponseDto representing the product's owner.
    */
   constructor(product: ProductDocument, owner: UserResponseDto) {
     this.id = product._id.toString();
@@ -53,6 +54,7 @@ export class ProductResponseDto {
   }
 }
 
+@ApiExtraModels(ProductResponseDto)
 export class ProductSuccessResponseDto<T> {
   @ApiProperty({ example: true })
   success: boolean;
@@ -130,6 +132,7 @@ export class ProductDeleteSuccessResponseDto {
   }
 }
 
+@ApiExtraModels(ProductResponseDto)
 export class ProductPaginatedResponseDto {
   @ApiProperty({ type: Boolean, example: true })
   hasNextPage: boolean;
@@ -168,6 +171,7 @@ export class ProductPaginatedResponseDto {
    * Constructs a new ProductPaginatedResponseDto from a PaginateResult of ProductDocument.
    *
    * @param paginatedResult The PaginateResult<ProductDocument> to construct from.
+   * @param owners The array of UserResponseDto representing product owners.
    */
   constructor(
     paginatedResult: PaginateResult<ProductDocument>,
