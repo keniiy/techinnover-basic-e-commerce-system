@@ -29,6 +29,8 @@ This project is a robust API built using the [Nest.js](https://github.com/nestjs
 - **Authentication**: JWT-based authentication with role-based access control.
 - **Role-Based Access Control**: Different access levels for users, admins, and super admins.
 - **Pagination and Filtering**: Support for paginated and filtered queries for large datasets.
+- **Swagger Documentation**: Protected by basic authentication (username and password). Only authorized users can view the Swagger documentation.
+
 
 ## Project Setup
 
@@ -73,6 +75,14 @@ Copy the .env.example file to .env and configure the variables according to your
   # production mode
   $ pnpm run start:prod
 ```
+### The Swagger documentation is protected by basic authentication. To access the Swagger UI:
+
+	1.	Visit the Swagger documentation at http://localhost:3000/api/docs.
+	2.	Enter the username and password when prompted:
+	•	Username: The username is configured via the SWAGGER_USER environment variable (default: admin).
+	•	Password: The password is configured via the SWAGGER_PASSWORD environment variable (default: password).
+
+These credentials can be customized in the .env file to suit your security requirements.
 
 ### Run Tests
 ```bash
