@@ -1,6 +1,10 @@
 import { ProductModel } from '@common/DAL/products/models';
 import { AuthenticatedUser, Roles } from '@common/decorators';
-import { ProductSuccessResponseDto, ProductResponseDto } from '@common/dtos';
+import {
+  ProductSuccessResponseDto,
+  ProductResponseDto,
+  ProductErrorResponseDto,
+} from '@common/dtos';
 import { UserRole } from '@common/enums';
 import { JwtAuthGuard } from '@common/guards';
 import { IUserAuthenticated } from '@common/interfaces';
@@ -24,6 +28,7 @@ import {
 } from '@nestjs/swagger';
 import { FindProductsDto, FindProductDto } from '../dto/version1';
 import { ProductServiceVersion1 } from '../services/product.service1';
+import { CreateProductDto } from '../dto/version1/create-product.dto';
 
 @ApiTags('Product Management V1')
 @Controller({
@@ -36,27 +41,42 @@ export class ProductControllerVersion1 {
   @Post()
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Create Product' })
-  @ApiBody({ type: ProductModel })
+  @ApiBody({ type: CreateProductDto })
   @ApiResponse({
     status: 201,
     description: 'Product created successfully',
     type: ProductSuccessResponseDto<ProductResponseDto>,
   })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad request',
+    type: ProductErrorResponseDto,
+  })
   async createProduct(
     @AuthenticatedUser() user: IUserAuthenticated,
-    @Body() productData: Partial<ProductModel>,
+    @Body() createProductDto: CreateProductDto,
   ) {
-    return this.productService.createProduct(user, productData);
+    return this.productService.createProduct(user, createProductDto);
   }
 
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Update Product' })
-  @ApiBody({ type: ProductModel })
+  @ApiBody({ type: CreateProductDto })
   @ApiResponse({
     status: 200,
     description: 'Product updated successfully',
     type: ProductSuccessResponseDto<ProductResponseDto>,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad request',
+    type: ProductErrorResponseDto,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Product not found or not owned by user',
+    type: ProductErrorResponseDto,
   })
   async updateProduct(
     @AuthenticatedUser() user: IUserAuthenticated,
@@ -74,6 +94,11 @@ export class ProductControllerVersion1 {
     description: 'Product deleted successfully',
     type: ProductSuccessResponseDto<void>,
   })
+  @ApiResponse({
+    status: 404,
+    description: 'Product not found or not owned by user',
+    type: ProductErrorResponseDto,
+  })
   async deleteProduct(
     @AuthenticatedUser() user: IUserAuthenticated,
     @Param('id') productId: string,
@@ -90,6 +115,11 @@ export class ProductControllerVersion1 {
     description: 'Product approved successfully',
     type: ProductSuccessResponseDto<ProductResponseDto>,
   })
+  @ApiResponse({
+    status: 404,
+    description: 'Product not found',
+    type: ProductErrorResponseDto,
+  })
   async approveProduct(@Param('id') productId: string) {
     return this.productService.approveProduct(productId);
   }
@@ -102,6 +132,11 @@ export class ProductControllerVersion1 {
     description: 'Approved products retrieved successfully',
     type: ProductSuccessResponseDto<ProductResponseDto[]>,
   })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad request',
+    type: ProductErrorResponseDto,
+  })
   async getApprovedProducts(@Query() findProductsDto: FindProductsDto) {
     return this.productService.findApprovedProducts(findProductsDto);
   }
@@ -113,6 +148,11 @@ export class ProductControllerVersion1 {
     status: 200,
     description: 'Product retrieved successfully',
     type: ProductSuccessResponseDto<ProductResponseDto>,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Product not found',
+    type: ProductErrorResponseDto,
   })
   async getProduct(
     @Param('id') productId: string,
@@ -129,6 +169,11 @@ export class ProductControllerVersion1 {
     status: 200,
     description: 'User products retrieved successfully',
     type: ProductSuccessResponseDto<ProductResponseDto[]>,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad request',
+    type: ProductErrorResponseDto,
   })
   async getUserProducts(
     @AuthenticatedUser() user: IUserAuthenticated,
