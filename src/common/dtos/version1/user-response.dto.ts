@@ -1,5 +1,5 @@
 import { UserDocument } from '@common/DAL';
-import { ApiProperty, getSchemaPath } from '@nestjs/swagger';
+import { ApiExtraModels, ApiProperty, getSchemaPath } from '@nestjs/swagger';
 import { PaginateResult } from 'mongoose';
 
 export class UserResponseDto {
@@ -32,6 +32,7 @@ export class UserResponseDto {
   }
 }
 
+@ApiExtraModels(UserResponseDto)
 export class UserSuccessResponseDto<T> {
   @ApiProperty({ example: true })
   success: boolean;
