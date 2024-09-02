@@ -1,5 +1,10 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { JwtAuthGuard } from '@common/guards';
 import { AuthenticatedUser } from '@common/decorators';
 import { IUserAuthenticated } from '@common/interfaces';
@@ -11,6 +16,7 @@ import {
 import { UserServiceVersion1 } from '../services/user.service';
 
 @ApiTags('User Management V1')
+@ApiBearerAuth()
 @Controller({
   path: 'user',
   version: '1',

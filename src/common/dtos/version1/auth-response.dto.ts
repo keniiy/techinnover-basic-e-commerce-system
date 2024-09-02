@@ -7,12 +7,16 @@ export class AuthResponseDto {
   @ApiProperty({ example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...' })
   refreshToken: string;
 
-  @ApiProperty({ example: '64e839c5f1a1b2c4d4f7890a' })
-  userId: string;
+  @ApiProperty({ example: '66d5f9b6838d25aaaaecc42e' })
+  id: string;
 
   @ApiProperty({ example: 'John Doe' })
   name: string;
 
-  @ApiProperty({ example: 'USER' })
+  @ApiProperty({ example: 'user' })
   role: string;
+
+  constructor(partial: Partial<AuthResponseDto>) {
+    Object.assign(this, partial);
+  }
 }

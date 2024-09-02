@@ -1,17 +1,25 @@
 import { Controller, Post, Body, Patch, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBody,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { AuthServiceVersion1 } from '../services/auth.service1';
-import { ChangePasswordDto, LoginDto } from '../dto/version1';
+import { ChangePasswordDto, LoginDto, RefreshTokenDto } from '../dto/version1';
 import {
   UserSuccessResponseDto,
   UserErrorResponseDto,
   AuthResponseDto,
+  SuccessNullDataResponseDto,
 } from '@common/dtos';
 import { JwtAuthGuard } from '@common/guards';
 import { AuthenticatedUser } from '@common/decorators';
 import { IUserAuthenticated } from '@common/interfaces';
 
 @ApiTags('Authentication V1')
+@ApiBearerAuth()
 @Controller({
   path: 'auth',
   version: '1',
@@ -43,7 +51,7 @@ export class AuthControllerVersion1 {
   @ApiResponse({
     status: 200,
     description: 'Password changed successfully',
-    type: UserSuccessResponseDto<void>,
+    type: SuccessNullDataResponseDto,
   })
   @ApiResponse({
     status: 400,
@@ -55,5 +63,22 @@ export class AuthControllerVersion1 {
     @Body() changePasswordDto: ChangePasswordDto,
   ) {
     return this.authService.changePassword(user.id, changePasswordDto);
+  }
+
+  @Post('refresh-token')
+  @ApiOperation({ summary: 'Refresh Access Token' })
+  @ApiBody({ type: RefreshTokenDto, description: 'Refresh token request' })
+  @ApiResponse({
+    status: 200,
+    description: 'Token refreshed successfully',
+    type: UserSuccessResponseDto<AuthResponseDto>,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Invalid or expired refresh token',
+    type: UserErrorResponseDto,
+  })
+  async refreshToken(@Body() refreshTokenDto: RefreshTokenDto) {
+    return this.authService.refreshToken(refreshTokenDto);
   }
 }

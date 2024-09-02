@@ -5,7 +5,7 @@ import {
   UserSuccessResponseDto,
   UserErrorResponseDto,
 } from '@common/dtos';
-import { LoginDto, ChangePasswordDto } from '../dto/version1';
+import { LoginDto, ChangePasswordDto, RefreshTokenDto } from '../dto/version1';
 import { comparePassword, hashPassword } from '@common/utils';
 import { HttpStatus } from '@nestjs/common';
 import { TokenService } from '@common/integrations';
@@ -29,7 +29,7 @@ export class AuthServiceVersion1 {
       return {
         accessToken,
         refreshToken,
-        userId: _id.toString(),
+        id: _id.toString(),
         name,
         role,
       };
@@ -41,6 +41,7 @@ export class AuthServiceVersion1 {
     loginDto: LoginDto,
   ): Promise<UserSuccessResponseDto<AuthResponseDto> | UserErrorResponseDto> {
     const user = await this.validateUser(loginDto.email, loginDto.password);
+
     if (!user) {
       return new UserErrorResponseDto(
         HttpStatus.UNAUTHORIZED,
@@ -84,6 +85,41 @@ export class AuthServiceVersion1 {
       HttpStatus.OK,
       'Password changed successfully',
       null,
+    );
+  }
+
+  async refreshToken(
+    refreshTokenDto: RefreshTokenDto,
+  ): Promise<UserSuccessResponseDto<AuthResponseDto> | UserErrorResponseDto> {
+    const decoded = await this.tokenService.verifyToken(
+      refreshTokenDto.refreshToken,
+    );
+
+    const user = await this.userRepository.findById(decoded.userId);
+
+    if (!user) {
+      return new UserErrorResponseDto(
+        HttpStatus.UNAUTHORIZED,
+        'User not found',
+      );
+    }
+
+    const { accessToken, refreshToken } =
+      await this.tokenService.handleCreateTokens(
+        user._id.toString(),
+        user.role,
+      );
+
+    return new UserSuccessResponseDto(
+      HttpStatus.OK,
+      'Token refreshed successfully',
+      {
+        accessToken,
+        refreshToken,
+        id: user._id.toString(),
+        name: user.name,
+        role: user.role,
+      },
     );
   }
 }

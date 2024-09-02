@@ -5,6 +5,7 @@ import {
   ApiResponse,
   ApiBody,
   ApiQuery,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { OnboardingServiceVersion1 } from '../services/onboarding.service1';
 import { UserRole } from '@common/enums';
@@ -16,6 +17,7 @@ import {
 } from '@common/dtos';
 
 @ApiTags('Onboarding V1')
+@ApiBearerAuth()
 @Controller({
   path: 'onboarding',
   version: '1',

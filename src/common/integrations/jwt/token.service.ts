@@ -2,9 +2,10 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
+  UnauthorizedException,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class TokenService {
@@ -61,17 +62,33 @@ export class TokenService {
       const accessToken = await this.generateToken(
         userId,
         userType,
-        this.configService.getOrThrow('JWT_ACCESS_TOKEN_EXPIRES_IN'),
+        this.configService.get('JWT_ACCESS_TOKEN_EXPIRES_IN', '3600s'),
       );
       const refreshToken = await this.generateToken(
         userId,
         userType,
-        this.configService.getOrThrow('JWT_REFRESH_TOKEN_EXPIRES_IN'),
+        this.configService.get('JWT_REFRESH_TOKEN_EXPIRES_IN', '7d'),
       );
       return { accessToken, refreshToken };
     } catch (err) {
       this.logger.error('Error creating tokens', err.stack);
       throw new InternalServerErrorException('Could not create tokens');
+    }
+  }
+
+  /**
+   * @description Verifies a JWT token to check its validity.
+   * @param {string} token - The JWT token to verify.
+   * @return {Promise<any>} - The decoded token if valid, otherwise throws an error.
+   */
+  async verifyToken(token: string): Promise<any> {
+    try {
+      return await this.jwtService.verifyAsync(token, {
+        secret: this.configService.getOrThrow('JWT_SECRET'),
+      });
+    } catch (err) {
+      this.logger.error('Error verifying token', err.stack);
+      throw new UnauthorizedException('Invalid or expired token');
     }
   }
 }

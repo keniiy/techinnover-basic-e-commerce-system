@@ -1,5 +1,11 @@
 import { Controller, Patch, Body, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBody,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { JwtAuthGuard } from '@common/guards';
 import { Roles } from '@common/decorators/roles.decorator';
 import { UserRole } from '@common/enums';
@@ -12,6 +18,7 @@ import { UpdateUserStatusDto } from '../dto/version1/update-user-status.dto';
 import { AdminServiceVersion1 } from '../services/admin.service1';
 
 @ApiTags('Admin Management V1')
+@ApiBearerAuth()
 @Controller({
   path: 'admin',
   version: '1',

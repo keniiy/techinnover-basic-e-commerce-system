@@ -25,12 +25,14 @@ import {
   ApiResponse,
   ApiBody,
   ApiQuery,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { FindProductsDto, FindProductDto } from '../dto/version1';
 import { ProductServiceVersion1 } from '../services/product.service1';
 import { CreateProductDto } from '../dto/version1/create-product.dto';
 
 @ApiTags('Product Management V1')
+@ApiBearerAuth()
 @Controller({
   path: 'products',
   version: '1',
