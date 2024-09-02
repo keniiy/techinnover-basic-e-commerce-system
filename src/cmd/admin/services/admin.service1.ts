@@ -4,10 +4,12 @@ import {
   UserSuccessResponseDto,
   UserErrorResponseDto,
   UserResponseDto,
+  UserPaginatedResponseDto,
 } from '@common/dtos';
 import { HttpStatus } from '@nestjs/common';
 import { UserStatus } from '@common/enums';
 import { UpdateUserStatusDto } from '../dto/version1/update-user-status.dto';
+import { FindUsersDto } from '../dto';
 
 @Injectable()
 export class AdminServiceVersion1 {
@@ -35,6 +37,23 @@ export class AdminServiceVersion1 {
       HttpStatus.OK,
       `User ${action} successfully`,
       new UserResponseDto(updatedUser),
+    );
+  }
+
+  async getAllUsers(
+    findUsersDto: FindUsersDto,
+  ): Promise<
+    UserSuccessResponseDto<UserPaginatedResponseDto> | UserErrorResponseDto
+  > {
+    const users = await this.userRepository.findManyWithPagination(
+      {},
+      findUsersDto,
+    );
+
+    return new UserSuccessResponseDto(
+      HttpStatus.OK,
+      'List of users retrieved successfully',
+      new UserPaginatedResponseDto(users),
     );
   }
 }

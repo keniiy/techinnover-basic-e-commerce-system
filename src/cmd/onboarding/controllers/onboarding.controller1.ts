@@ -29,6 +29,7 @@ import {
 } from '@common/dtos/version1/email-availability-response.dto';
 import { Roles } from '@common/decorators';
 import { JwtAuthGuard } from '@common/guards';
+import { RolesGuard } from '@common/guards/roles.guard';
 
 @ApiTags('Onboarding V1')
 @ApiBearerAuth()
@@ -65,7 +66,7 @@ export class OnboardingControllerVersion1 {
   }
 
   @Post('create-admin')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: 'Create a new admin (SuperAdmin only)' })
   @ApiBody({ type: CreateUserDto, description: 'The admin details' })
   @ApiResponse({
