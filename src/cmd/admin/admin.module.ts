@@ -1,9 +1,18 @@
+import { UserSchema, UserRepository } from '@common/DAL';
+import { Collections } from '@common/enums';
+import { JwtPassportStrategy } from '@common/strategies';
 import { Module } from '@nestjs/common';
-import { AdminService } from './admin.service';
-import { AdminController } from './admin.controller';
+import { MongooseModule } from '@nestjs/mongoose';
+import { AdminControllerVersion1 } from './controllers';
+import { AdminServiceVersion1 } from './services';
 
 @Module({
-  controllers: [AdminController],
-  providers: [AdminService],
+  imports: [
+    MongooseModule.forFeature([
+      { name: Collections.USERS, schema: UserSchema },
+    ]),
+  ],
+  controllers: [AdminControllerVersion1],
+  providers: [AdminServiceVersion1, UserRepository, JwtPassportStrategy],
 })
 export class AdminModule {}
