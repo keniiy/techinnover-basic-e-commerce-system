@@ -48,7 +48,8 @@
       "@utils/*": ["./src/common/utils/*"],
       "@utils": ["./src/common/utils/index.ts"],
       "@scripts/*": ["./src/common/scripts/*"], 
-      "@scripts": ["src/common/DAL/database-scripts/index.ts"]
+      "@dtos/*": ["./src/common/dtos/*"],
+
     }
   },
   "include": [

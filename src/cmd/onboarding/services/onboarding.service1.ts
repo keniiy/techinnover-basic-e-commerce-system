@@ -1,26 +1,98 @@
-import { Injectable } from '@nestjs/common';
-import { CreateOnboardingDto } from '../dto/version1';
-import { UpdateOnboardingDto } from '../dto/version1';
+import {
+  Injectable,
+  ConflictException,
+  HttpStatus,
+  OnModuleInit,
+  Logger,
+} from '@nestjs/common';
+import { CreateUserDto } from '../dto/version1';
+import { UserRepository } from '@common/DAL/users/repositories/user.repository';
+import { hashPassword } from '@common/utils/password.util';
+import { UserRole, UserStatus } from '@common/enums';
+import { ConfigService } from '@nestjs/config';
+import {
+  UserResponseDto,
+  UserSuccessResponseDto,
+  UserErrorResponseDto,
+} from '@common/dtos';
+import { ResponseMessages } from '@common/constants';
 
 @Injectable()
-export class OnboardingServiceVersion1 {
-  create(createOnboardingDto: CreateOnboardingDto) {
-    return 'This action adds a new onboarding';
+export class OnboardingServiceVersion1 implements OnModuleInit {
+  private readonly logger = new Logger(OnboardingServiceVersion1.name);
+
+  constructor(
+    private readonly userRepository: UserRepository,
+    private readonly configService: ConfigService,
+  ) {}
+
+  async onModuleInit() {
+    await this.createSuperAdmin();
   }
 
-  findAll() {
-    return `This action returns all onboarding`;
+  async register(
+    createUserDto: CreateUserDto,
+    role: UserRole,
+  ): Promise<UserSuccessResponseDto<UserResponseDto> | UserErrorResponseDto> {
+    const userExists = await this.userRepository.findOne({
+      email: createUserDto.email,
+    });
+
+    if (userExists) {
+      throw new ConflictException(ResponseMessages.ALREADY_EXISTS(role));
+    }
+
+    const hashedPassword = await hashPassword(createUserDto.password);
+
+    const newUser = await this.userRepository.create({
+      ...createUserDto,
+      password: hashedPassword,
+      role,
+      status: UserStatus.ACTIVE,
+    });
+
+    return new UserSuccessResponseDto(
+      HttpStatus.CREATED,
+      `${role} created successfully`,
+      new UserResponseDto(newUser),
+    );
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} onboarding`;
+  async checkEmailAvailability(
+    email: string,
+  ): Promise<UserSuccessResponseDto<{ available: boolean }>> {
+    const userExists = await this.userRepository.findOne({ email });
+
+    return new UserSuccessResponseDto(
+      HttpStatus.OK,
+      'Email availability check successful',
+      { available: !userExists },
+    );
   }
 
-  update(id: number, updateOnboardingDto: UpdateOnboardingDto) {
-    return `This action updates a #${id} onboarding`;
-  }
+  private async createSuperAdmin() {
+    const superAdminExists = await this.userRepository.findOne({
+      role: UserRole.SUPER_ADMIN,
+    });
 
-  remove(id: number) {
-    return `This action removes a #${id} onboarding`;
+    if (!superAdminExists) {
+      const superAdminEmail =
+        this.configService.get<string>('SUPER_ADMIN_EMAIL') ||
+        'superadmin@example.com';
+      const superAdminPassword =
+        this.configService.get<string>('SUPER_ADMIN_PASSWORD') || 'password123';
+
+      const hashedPassword = await hashPassword(superAdminPassword);
+
+      await this.userRepository.create({
+        name: 'Super Admin',
+        email: superAdminEmail,
+        password: hashedPassword,
+        role: UserRole.SUPER_ADMIN,
+        status: UserStatus.ACTIVE,
+      });
+
+      this.logger.log(`SuperAdmin created with email: ${superAdminEmail}`);
+    }
   }
 }

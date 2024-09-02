@@ -10,3 +10,6 @@ export * from './DAL';
 export * from './@types';
 export * from './enums';
 export * from './utils';
+export * from './dtos';
+export * from './guards';
+export * from './decorators';

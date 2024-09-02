@@ -1,6 +1,6 @@
 export interface ISuccessResponse<T = any> {
   success: boolean;
-  data: T;
+  data?: T;
   statusCode: number;
   message: string;
 }

@@ -46,7 +46,7 @@ export async function bootstrap(): Promise<void> {
       'API description for Techinnover Basic E-Commerce System',
     ),
     version: configService.get<string>('SWAGGER_VERSION', '1.0.0'),
-    basePath: configService.get<string>('SWAGGER_BASE_PATH', '/api/doc'),
+    basePath: configService.get<string>('SWAGGER_BASE_PATH', '/api/docs'),
     serviceName: configService.get<string>(
       'SWAGGER_SERVICE_NAME',
       'techinnover',

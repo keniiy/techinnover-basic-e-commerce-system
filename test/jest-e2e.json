@@ -26,6 +26,7 @@
     "@types/(.*)$": "<rootDir>/../src/common/@types/$1",
     "@enums/(.*)$": "<rootDir>/../src/common/enums/$1",
     "@utils/(.*)$": "<rootDir>/../src/common/utils/$1",
-    "@scripts/(.*)$": "<rootDir>/../src/common/scripts/$1"
+    "@scripts/(.*)$": "<rootDir>/../src/common/scripts/$1",
+    "@dtos/(.*)$": "<rootDir>/../src/common/dtos/$1"
   }
 }
