@@ -11,6 +11,12 @@ import { HttpStatus } from '@nestjs/common';
 export class UserServiceVersion1 {
   constructor(private readonly userRepository: UserRepository) {}
 
+  /**
+   * Retrieves the profile of the user with the given ID.
+   *
+   * @param userId The ID of the user to retrieve.
+   * @returns A promise that resolves to a UserSuccessResponseDto containing the user document, or a UserErrorResponseDto if the user is not found.
+   */
   async getProfile(
     userId: string,
   ): Promise<UserSuccessResponseDto<UserResponseDto> | UserErrorResponseDto> {

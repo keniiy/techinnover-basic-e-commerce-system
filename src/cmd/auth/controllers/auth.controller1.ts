@@ -40,6 +40,11 @@ export class AuthControllerVersion1 {
     description: 'Invalid credentials',
     type: UserErrorResponseDto,
   })
+  /**
+   * Logs in a user and generates a JWT token based on the user's role.
+   * @param loginDto The user's login credentials.
+   * @returns A promise that resolves to a UserSuccessResponseDto containing the JWT token for the user.
+   */
   async login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);
   }
@@ -58,6 +63,11 @@ export class AuthControllerVersion1 {
     description: 'Invalid request',
     type: UserErrorResponseDto,
   })
+  /**
+   * Changes the password of the authenticated user.
+   * @param changePasswordDto The change password details.
+   * @returns A promise that resolves to a UserSuccessResponseDto indicating that the password was changed successfully.
+   */
   async changePassword(
     @AuthenticatedUser() user: IUserAuthenticated,
     @Body() changePasswordDto: ChangePasswordDto,
@@ -78,6 +88,11 @@ export class AuthControllerVersion1 {
     description: 'Invalid or expired refresh token',
     type: UserErrorResponseDto,
   })
+  /**
+   * Refreshes the access token for the user with the given refresh token.
+   * @param refreshTokenDto The refresh token details.
+   * @returns A promise that resolves to a UserSuccessResponseDto containing the new access token.
+   */
   async refreshToken(@Body() refreshTokenDto: RefreshTokenDto) {
     return this.authService.refreshToken(refreshTokenDto);
   }

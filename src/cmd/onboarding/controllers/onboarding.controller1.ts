@@ -38,6 +38,10 @@ import { RolesGuard } from '@common/guards/roles.guard';
   version: '1',
 })
 export class OnboardingControllerVersion1 {
+  /**
+   * The constructor for the OnboardingControllerVersion1 class.
+   * @param onboardingServiceVersion1 The OnboardingServiceVersion1 instance to be used for the controller.
+   */
   constructor(
     private readonly onboardingServiceVersion1: OnboardingServiceVersion1,
   ) {}
@@ -58,6 +62,11 @@ export class OnboardingControllerVersion1 {
     description: 'User with this email already exists',
     type: UserErrorResponseDto,
   })
+  /**
+   * Registers a new user.
+   * @param createUserDto The user details for registration.
+   * @returns A promise that resolves to a UserSuccessResponseDto containing the newly created user document if the registration was successful, or a UserErrorResponseDto if the registration failed.
+   */
   async register(@Body() createUserDto: CreateUserDto) {
     return this.onboardingServiceVersion1.register(
       createUserDto,
@@ -85,6 +94,11 @@ export class OnboardingControllerVersion1 {
     type: UserErrorResponseDto,
   })
   @Roles(UserRole.SUPER_ADMIN)
+  /**
+   * Creates a new admin user (SuperAdmin only).
+   * @param createAdminDto The admin details for registration.
+   * @returns A promise that resolves to a UserSuccessResponseDto containing the newly created user document if the registration was successful, or a UserErrorResponseDto if the registration failed.
+   */
   async createAdmin(@Body() createAdminDto: CreateUserDto) {
     return this.onboardingServiceVersion1.register(
       createAdminDto,
@@ -105,6 +119,11 @@ export class OnboardingControllerVersion1 {
     description: 'Invalid email format',
     type: UserSuccessResponseDto<EmailFalseAvailabilityResponseDto>,
   })
+  /**
+   * Checks if an email is available or already taken.
+   * @param email The email to check.
+   * @returns A promise that resolves to a UserSuccessResponseDto containing a boolean indicating if the email is available (true) or not (false).
+   */
   async checkEmail(@Query('email') email: string) {
     return this.onboardingServiceVersion1.checkEmailAvailability(email);
   }

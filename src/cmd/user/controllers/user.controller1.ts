@@ -13,7 +13,7 @@ import {
   UserErrorResponseDto,
   UserResponseDto,
 } from '@common/dtos';
-import { UserServiceVersion1 } from '../services/user.service';
+import { UserServiceVersion1 } from '../services/user.service1';
 
 @ApiTags('User Management V1')
 @ApiBearerAuth()
@@ -37,6 +37,12 @@ export class UserControllerVersion1 {
     description: 'User not found',
     type: UserErrorResponseDto,
   })
+  /**
+   * Retrieves the profile of the authenticated user.
+   *
+   * @param user The authenticated user making the request.
+   * @returns A promise that resolves to a UserSuccessResponseDto containing the user document, or a UserErrorResponseDto if the user is not found.
+   */
   async getProfile(@AuthenticatedUser() user: IUserAuthenticated) {
     return this.userService.getProfile(user.id);
   }

@@ -16,6 +16,10 @@ export class AuthResponseDto {
   @ApiProperty({ example: 'user' })
   role: string;
 
+  /**
+   * Constructs a new AuthResponseDto with the given properties.
+   * @param partial The object with the properties to copy to the new instance.
+   */
   constructor(partial: Partial<AuthResponseDto>) {
     Object.assign(this, partial);
   }

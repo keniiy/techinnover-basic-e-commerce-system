@@ -55,6 +55,13 @@ export class ProductControllerVersion1 {
     description: 'Bad request',
     type: ProductErrorResponseDto,
   })
+  /**
+   * Creates a new product.
+   *
+   * @param user The authenticated user making the request.
+   * @param createProductDto The data for the new product.
+   * @returns A successful response with the created product data.
+   */
   async createProduct(
     @AuthenticatedUser() user: IUserAuthenticated,
     @Body() createProductDto: CreateProductDto,
@@ -76,6 +83,13 @@ export class ProductControllerVersion1 {
     description: 'Bad request',
     type: ProductErrorResponseDto,
   })
+  /**
+   * Retrieves all products of the authenticated user.
+   *
+   * @param user The authenticated user making the request.
+   * @param findProductsDto The pagination and search filter options.
+   * @returns A successful response with the user's products data.
+   */
   async getUserProducts(
     @AuthenticatedUser() user: IUserAuthenticated,
     @Query() findProductsDto: FindProductsDto,
@@ -102,6 +116,13 @@ export class ProductControllerVersion1 {
     description: 'Product not found or not owned by user',
     type: ProductErrorResponseDto,
   })
+  /**
+   * Updates a product.
+   * @param user The authenticated user making the request.
+   * @param productId The ID of the product to update.
+   * @param updateData The partial product data to update.
+   * @returns A successful response with the updated product data, or a failure response if the product is not found or not owned by user.
+   */
   async updateProduct(
     @AuthenticatedUser() user: IUserAuthenticated,
     @Param('id') productId: string,
@@ -123,6 +144,12 @@ export class ProductControllerVersion1 {
     description: 'Product not found or not owned by user',
     type: ProductErrorResponseDto,
   })
+  /**
+   * Deletes a product.
+   * @param user The authenticated user making the request.
+   * @param productId The ID of the product to delete.
+   * @returns A successful response with no data, or a failure response if the product is not found or not owned by user.
+   */
   async deleteProduct(
     @AuthenticatedUser() user: IUserAuthenticated,
     @Param('id') productId: string,
@@ -144,6 +171,11 @@ export class ProductControllerVersion1 {
     description: 'Product not found',
     type: ProductErrorResponseDto,
   })
+  /**
+   * Approves a product.
+   * @param productId The ID of the product to approve.
+   * @returns A successful response with the approved product data, or a failure response if the product is not found.
+   */
   async approveProduct(@Param('id') productId: string) {
     return this.productService.approveProduct(productId);
   }
@@ -161,6 +193,11 @@ export class ProductControllerVersion1 {
     description: 'Bad request',
     type: ProductErrorResponseDto,
   })
+  /**
+   * Retrieves all approved products.
+   * @param findProductsDto The pagination and search filter options.
+   * @returns A successful response with the approved products data.
+   */
   async getApprovedProducts(@Query() findProductsDto: FindProductsDto) {
     return this.productService.findApprovedProducts(findProductsDto);
   }
@@ -178,6 +215,12 @@ export class ProductControllerVersion1 {
     description: 'Product not found',
     type: ProductErrorResponseDto,
   })
+  /**
+   * Retrieves a single approved product.
+   * @param productId The ID of the product to retrieve.
+   * @param findProductDto The pagination and search filter options.
+   * @returns A successful response with the product data.
+   */
   async getProduct(
     @Param('id') productId: string,
     @Query() findProductDto: FindProductDto,
@@ -200,6 +243,11 @@ export class ProductControllerVersion1 {
     description: 'Bad request',
     type: ProductErrorResponseDto,
   })
+  /**
+   * Retrieves all products (admin only).
+   * @param findProductsDto The pagination and search filter options.
+   * @returns A successful response with the products data.
+   */
   async getAllProducts(@Query() findProductsDto: FindProductsDto) {
     return this.productService.findAllProducts(findProductsDto);
   }

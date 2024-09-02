@@ -45,6 +45,11 @@ export class AdminControllerVersion1 {
     description: 'User not found',
     type: UserErrorResponseDto,
   })
+  /**
+   * Update user status (ban/un-ban).
+   * @param updateUserStatusDto User ID and status to update.
+   * @returns Updated user document.
+   */
   async updateUserStatus(@Body() updateUserStatusDto: UpdateUserStatusDto) {
     return this.adminService.updateUserStatus(updateUserStatusDto);
   }
@@ -63,6 +68,11 @@ export class AdminControllerVersion1 {
     description: 'Invalid request',
     type: UserErrorResponseDto,
   })
+  /**
+   * Get list of all users.
+   * @param findUsersDto Pagination and search filter options.
+   * @returns Paginated list of user documents.
+   */
   async getAllUsers(@Query() findUsersDto: FindUsersDto) {
     return this.adminService.getAllUsers(findUsersDto);
   }

@@ -132,9 +132,9 @@ export class UserPaginatedResponseDto {
   docs: UserResponseDto[];
 
   /**
-   * Constructs a new UserPaginatedResponseDto from a PaginateResult of UserDocument.
+   * Constructs a new UserPaginatedResponseDto from the given PaginateResult.
    *
-   * @param paginatedResult The PaginateResult<UserDocument> to construct from.
+   * @param paginatedResult The PaginateResult to construct the UserPaginatedResponseDto from.
    */
   constructor(paginatedResult: PaginateResult<UserDocument>) {
     this.hasNextPage = paginatedResult.hasNextPage;

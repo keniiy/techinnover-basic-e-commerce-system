@@ -34,6 +34,12 @@ export class ProductResponseDto {
   @ApiProperty({ example: '2024-08-31T01:41:20.407Z' })
   updatedAt: Date;
 
+  /**
+   * Constructs a new ProductResponseDto from a ProductDocument and UserResponseDto.
+   *
+   * @param product The ProductDocument to construct from.
+   * @param owner The UserResponseDto for the owner of the product.
+   */
   constructor(product: ProductDocument, owner: UserResponseDto) {
     this.id = product._id.toString();
     this.name = product.name;

@@ -11,18 +11,8 @@ import { createParamDecorator, ExecutionContext } from '@nestjs/common';
  */
 export const AuthenticatedUser = createParamDecorator(
   (data: unknown, ctx: ExecutionContext) => {
-    // Depending on the context type, retrieve the user from the appropriate request object.
     if (ctx.getType() === 'http') {
-      // For HTTP contexts, retrieve the user from the request object.
       return ctx.switchToHttp().getRequest().user as IUser;
-    }
-    if (ctx.getType() === 'ws') {
-      // For WebSocket contexts, retrieve the user from the client object.
-      return ctx.switchToWs().getClient().user as IUser;
-    }
-    if (ctx.getType() === 'rpc') {
-      // For RPC contexts, retrieve the user from the data object.
-      return ctx.switchToRpc().getData().user as IUser;
     }
   },
 );

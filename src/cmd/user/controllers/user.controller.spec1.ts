@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UserControllerVersion1 } from './user.controller';
-import { UserServiceVersion1 } from '../services/user.service';
+import { UserControllerVersion1 } from './user.controller1';
+import { UserServiceVersion1 } from '../services/user.service1';
 
 describe('UserControllerVersion1', () => {
   let controller: UserControllerVersion1;

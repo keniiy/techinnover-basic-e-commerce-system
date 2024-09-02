@@ -9,6 +9,12 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 export class JwtPassportStrategy extends PassportStrategy(Strategy) {
   private readonly logger: Logger = new Logger(JwtPassportStrategy.name);
 
+  /**
+   * Creates an instance of JwtPassportStrategy.
+   *
+   * @param configService The ConfigService used to retrieve the secret key from the configuration.
+   * @param userRepository The instance of the UserRepository.
+   */
   constructor(
     private readonly configService: ConfigService,
     private readonly userRepository: UserRepository,

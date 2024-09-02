@@ -13,11 +13,24 @@ import { UserStatus } from '@common/enums';
 
 @Injectable()
 export class AuthServiceVersion1 {
+  /**
+   * Constructor for the AuthServiceVersion1 class.
+   *
+   * @param userRepository The instance of the UserRepository.
+   * @param tokenService The instance of the TokenService.
+   */
   constructor(
     private readonly userRepository: UserRepository,
     private readonly tokenService: TokenService,
   ) {}
 
+  /**
+   * Validates a user by checking the given email and password.
+   * @param email The email address of the user to validate.
+   * @param pass The password of the user to validate.
+   * @returns A promise that resolves to an AuthResponseDto if the user is valid, or null if the user is not found.
+   * @throws UnauthorizedException If the user is found but the account has been banned.
+   */
   async validateUser(
     email: string,
     pass: string,
@@ -47,6 +60,11 @@ export class AuthServiceVersion1 {
     return null;
   }
 
+  /**
+   * Logs in a user and generates a JWT token based on the user's role.
+   * @param loginDto The user's login credentials.
+   * @returns A promise that resolves to a UserSuccessResponseDto containing the JWT token for the user, or a UserErrorResponseDto if the user is not found or the account has been banned.
+   */
   async login(
     loginDto: LoginDto,
   ): Promise<UserSuccessResponseDto<AuthResponseDto> | UserErrorResponseDto> {
@@ -65,6 +83,12 @@ export class AuthServiceVersion1 {
     );
   }
 
+  /**
+   * Changes the password of the user with the given ID.
+   * @param userId The ID of the user whose password is being changed.
+   * @param changePasswordDto The current and new password.
+   * @returns A promise that resolves to a UserSuccessResponseDto indicating that the password was changed successfully, or a UserErrorResponseDto if the user is not found or the current password is incorrect.
+   */
   async changePassword(
     userId: string,
     changePasswordDto: ChangePasswordDto,
@@ -98,6 +122,11 @@ export class AuthServiceVersion1 {
     );
   }
 
+  /**
+   * Refreshes the access token for the user with the given refresh token.
+   * @param refreshTokenDto The refresh token details.
+   * @returns A promise that resolves to a UserSuccessResponseDto containing the new access token, or a UserErrorResponseDto if the user is not found.
+   */
   async refreshToken(
     refreshTokenDto: RefreshTokenDto,
   ): Promise<UserSuccessResponseDto<AuthResponseDto> | UserErrorResponseDto> {

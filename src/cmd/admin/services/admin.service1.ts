@@ -15,6 +15,15 @@ import { FindUsersDto } from '../dto';
 export class AdminServiceVersion1 {
   constructor(private readonly userRepository: UserRepository) {}
 
+  /**
+   * Update user status (ban/un-ban).
+   *
+   * @param updateUserStatusDto User ID and status to update.
+   * @returns Updated user document.
+   *
+   * @throws UserErrorResponseDto If user is not found.
+   * @throws UserErrorResponseDto If user is a super admin.
+   */
   async updateUserStatus(
     updateUserStatusDto: UpdateUserStatusDto,
   ): Promise<UserSuccessResponseDto<UserResponseDto> | UserErrorResponseDto> {
@@ -45,6 +54,11 @@ export class AdminServiceVersion1 {
     );
   }
 
+  /**
+   * Get list of all users.
+   * @param findUsersDto Pagination and search filter options.
+   * @returns Paginated list of user documents.
+   */
   async getAllUsers(
     findUsersDto: FindUsersDto,
   ): Promise<

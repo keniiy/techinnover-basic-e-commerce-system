@@ -22,6 +22,12 @@ import { EmailAvailabilityResponseDto } from '@common/dtos/version1/email-availa
 export class OnboardingServiceVersion1 implements OnModuleInit {
   private readonly logger = new Logger(OnboardingServiceVersion1.name);
 
+  /**
+   * Constructor for the OnboardingServiceVersion1 class.
+   *
+   * @param userRepository The instance of the UserRepository.
+   * @param configService The instance of the ConfigService.
+   */
   constructor(
     private readonly userRepository: UserRepository,
     private readonly configService: ConfigService,
@@ -31,6 +37,14 @@ export class OnboardingServiceVersion1 implements OnModuleInit {
     await this.createSuperAdmin();
   }
 
+  /**
+   * Registers a new user.
+   *
+   * @param createUserDto The user details for registration.
+   * @param role The role of the user to register.
+   * @returns A promise that resolves to a UserSuccessResponseDto containing the newly created user document if the registration was successful, or a UserErrorResponseDto if the registration failed.
+   * @throws ConflictException If user with the given email already exists.
+   */
   async register(
     createUserDto: CreateUserDto,
     role: UserRole,
@@ -62,6 +76,11 @@ export class OnboardingServiceVersion1 implements OnModuleInit {
     );
   }
 
+  /**
+   * Checks if an email is available or already taken.
+   * @param email The email to check.
+   * @returns A promise that resolves to a UserSuccessResponseDto containing a boolean indicating if the email is available (true) or not (false).
+   */
   async checkEmailAvailability(
     email: string,
   ): Promise<
@@ -77,6 +96,16 @@ export class OnboardingServiceVersion1 implements OnModuleInit {
     );
   }
 
+  /**
+   * Creates a super admin user if one does not exist.
+   *
+   * This is a private method that is automatically called when the module is initialized.
+   * If a super admin user already exists, this method does nothing.
+   * If no super admin user exists, this method creates one with the email and password
+   * specified in the environment variables SUPER_ADMIN_EMAIL and SUPER_ADMIN_PASSWORD,
+   * or with the default values 'superadmin@example.com' and 'password123', respectively.
+   * The created user is set as active.
+   */
   private async createSuperAdmin() {
     const superAdminExists = await this.userRepository.findOne({
       role: UserRole.SUPER_ADMIN,

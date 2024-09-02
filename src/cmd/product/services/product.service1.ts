@@ -16,11 +16,24 @@ import { UserRole } from '@common/enums';
 
 @Injectable()
 export class ProductServiceVersion1 {
+  /**
+   * Constructor for the ProductServiceVersion1 class.
+   *
+   * @param productRepository The instance of the ProductRepository.
+   * @param userRepository The instance of the UserRepository.
+   */
   constructor(
     private readonly productRepository: ProductRepository,
     private readonly userRepository: UserRepository,
   ) {}
 
+  /**
+   * Creates a new product.
+   *
+   * @param user The authenticated user making the request.
+   * @param productData The product data to create.
+   * @returns A successful response with the created product data, or a failure response if the product is not valid.
+   */
   async createProduct(
     user: IUserAuthenticated,
     productData: Partial<ProductModel>,
@@ -43,6 +56,13 @@ export class ProductServiceVersion1 {
     );
   }
 
+  /**
+   * Updates a product.
+   * @param user The authenticated user making the request.
+   * @param productId The ID of the product to update.
+   * @param updateData The partial product data to update.
+   * @returns A successful response with the updated product data, or a failure response if the product is not found or not owned by user.
+   */
   async updateProduct(
     user: IUserAuthenticated,
     productId: string,
@@ -77,6 +97,12 @@ export class ProductServiceVersion1 {
     );
   }
 
+  /**
+   * Deletes a product.
+   * @param user The authenticated user making the request.
+   * @param productId The ID of the product to delete.
+   * @returns A successful response with no data, or a failure response if the product is not found or not owned by user.
+   */
   async deleteProduct(
     user: IUserAuthenticated,
     productId: string,
@@ -104,6 +130,11 @@ export class ProductServiceVersion1 {
     );
   }
 
+  /**
+   * Approves a product.
+   * @param productId The ID of the product to approve.
+   * @returns A successful response with the approved product data, or a failure response if the product is not found.
+   */
   async approveProduct(
     productId: string,
   ): Promise<
@@ -138,6 +169,11 @@ export class ProductServiceVersion1 {
     );
   }
 
+  /**
+   * Retrieves all approved products.
+   * @param findProductsDto The pagination and search filter options.
+   * @returns A successful response with the approved products data, or a failure response if no products are found.
+   */
   async findApprovedProducts(
     findProductsDto: FindProductsDto,
   ): Promise<
@@ -174,6 +210,12 @@ export class ProductServiceVersion1 {
     );
   }
 
+  /**
+   * Retrieves a single approved product by ID.
+   * @param productId The ID of the product to retrieve.
+   * @param findProductDto The pagination and search filter options.
+   * @returns A successful response with the product data, or a failure response if the product is not found.
+   */
   async findProduct(
     productId: string,
     findProductDto: FindProductDto,
@@ -217,6 +259,12 @@ export class ProductServiceVersion1 {
     );
   }
 
+  /**
+   * Retrieves all products of the authenticated user.
+   * @param user The authenticated user making the request.
+   * @param findProductsDto The pagination and search filter options.
+   * @returns A successful response with the user's products data.
+   */
   async findUserProducts(
     user: IUserAuthenticated,
     findProductsDto: FindProductsDto,
@@ -251,6 +299,11 @@ export class ProductServiceVersion1 {
     );
   }
 
+  /**
+   * Retrieves all products with optional filtering by search and approval status.
+   * @param findProductsDto The pagination and search filter options.
+   * @returns A successful response with the products data, or a failure response if no products are found.
+   */
   async findAllProducts(
     findProductsDto: FindProductsDto,
   ): Promise<
